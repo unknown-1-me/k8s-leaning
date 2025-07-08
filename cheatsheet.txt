@@ -1,0 +1,40 @@
+->to creat a cluset in kind
+
+ kind create cluster --image kindest/node:v1.33.1@sha256:050072256b9a903bd914c0b2866828150cb229cea0efe5892e2b644d5dd3b34f --name cka-cluster2 --config config.yaml
+
+ ->to list the nodes 
+ kubectl config get-contexts
+
+-> to list the all clusters (context)
+kubectl config get-contexts
+
+-> to switch to another cluster 
+kubectl config use-context <cluster name>
+
+-> tocreate pods 
+kubectl create -f <name of the .yaml file to create pod>
+
+-> to delete pod 
+kubectl delete pod <name of the pod> 
+
+-> to edit pod config file 
+kubectl edit pod <pod name>
+
+-> to see the statuse and all other 
+kubectl describe pod <pod name>
+
+-> to interacct with the pod by cli 
+kubectl exec -it <pod name > -- sh
+
+-> to create the yalm file for the pod creation 
+s1:
+    kubectl run nginx --image=nginx --dry-run=client
+s2:
+    kubectl run nginx --image=nginx --dry-run=client -o yalm
+s3 : to creata  .yaml file with the content 
+    kubectl run nginx --image=nginx --dry-run=client -o yalm > pod.yaml
+
+-> to see the lables of the pods
+    kubectl get pods <pod name > --show-lables
+-> to get the extended details of a pod 
+    kubectl get pods <pod name > -o wide

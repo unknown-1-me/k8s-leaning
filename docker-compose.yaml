@@ -1,0 +1,12 @@
+version : '3.8'
+
+services  : 
+  app : 
+    image : nginx-react
+    ports : 
+      - "8000:80"
+    volumes : 
+      - my:/app
+  
+volumes :
+  my: 
