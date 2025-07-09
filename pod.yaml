@@ -11,3 +11,25 @@ spec :
     image : nginx
     ports : 
       - containerPort : 80
+
+
+# .yaml file to create Deployment ReplicaSet
+  apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deploy
+  labels:
+    env: demo
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      env: demo
+  template:
+    metadata:
+      labels:
+        env: demo
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
