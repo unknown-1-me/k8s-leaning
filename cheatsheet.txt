@@ -1,10 +1,13 @@
 -> to enable the animations in ui desktop
 gsettings set org.gnome.desktop.interface enable-animations false
 
-->to creat a cluset in kind
+->to creat a clusters  in kind
  kind create cluster --image kindest/node:v1.33.1@sha256:050072256b9a903bd914c0b2866828150cb229cea0efe5892e2b644d5dd3b34f --name cka-cluster2 --config config.yaml
 
- ->to list the nodes 
+-> to delete cluster 
+kind delete cluster --name <cluster name>
+
+ ->to list the clusters  
  kubectl config get-contexts
 
 -> to list the all clusters (context)
@@ -51,8 +54,10 @@ kubectl scale --replicas=<count> <pod name>
 -> to apply changes ffrom the yaml file to cluster
 kubectl apply -f <filename.yaml>
 
--> to change the image of the pod 
+-> to change the count of the pods 
 kubectl scale --replicas=<count> <pod name>
+
+-> to change the image of the pod 
 kubectl set image <pode name > <current image name>=<new image name>
 
 -> to roll out the history 
@@ -60,3 +65,119 @@ kubectl rollout history <pod name>
 
 -> to undo the changes 
 kubectl rollout undo <pod name>
+
+-> to get the pos lable 
+kubectl get pod --show-lable
+
+-> to list the services 
+kubectl get (svc || services)
+
+-> to get the all detalis like the ip etc....
+kubectl get pod -o wide
+
+//
+    yaml files to create
+//
+
+-> to create cluster .yaml
+
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+- role: control-plane
+  extraPortMappings:
+  - containerPort: 30080
+    hostPort: 30081
+- role: worker
+- role: worker
+
+
+-> to craete  the pod in cluseter .yaml
+
+apiVersion : v1
+kind: Pod
+metadata :
+  name : nginx-pod
+  labels :
+    env : demo
+    type : frontend
+spec: 
+  containers :
+    - name : nginx-container
+      image : nginx
+      ports : 
+        - containerPort : 80
+
+-> to creaete the services in the cluset to the pods
+
+
+apiVersion: v1
+kind : Service
+metadata: 
+  name: nodeport-sev
+  labels:
+    env : demo
+spec:
+  type : NodePort
+  ports:
+  - nodePort : 30080
+    port : 80
+    targetPort : 80
+  selector:
+      env : demo
+
+
+-> to create clusterip 
+
+apiVersion: v1
+kind : Service
+metadata: 
+  name: cluster-sev
+  labels:
+    env : demo
+spec:
+  ports:
+  - port : 80
+    targetPort : 80
+  selector:
+      env : demo
+
+
+-> to creaete the Deployment pod 
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-task
+  labels:
+    env: demo
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      env: demo
+  template:
+    metadata:
+      labels:
+        env: demo
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+
+- to create namespaces
+apiVersion : v1
+kind : namespaces
+metadata:
+  name : demo
+
+->>>>alternative for the yaml file to use cli
+  
+->to creat pod 
+  kubectl run nginx-pod --image=nginx
+  kubectl create deployment nginx-demo --image=nginx --namespace=demo
+  kubectl create deployment nginx-demo --image=nginx -n demo
+
+
+-> to expost the pod by service
+kubectl expose pod nginx-pod --port=80 --target-port=80 --type=ClusterIP
