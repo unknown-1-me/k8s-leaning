@@ -6,8 +6,11 @@ gsettings set org.gnome.desktop.interface enable-animations false
 
 -> to delete cluster 
 kind delete cluster --name <cluster name>
+kubectl config delete-context <name >
+
 
  ->to list the clusters  
+ kind get clusters
  kubectl config get-contexts
 
 -> to list the all clusters (context)
@@ -170,6 +173,8 @@ apiVersion : v1
 kind : namespaces
 metadata:
   name : demo
+<< or >>
+
 
 ->>>>alternative for the yaml file to use cli
   
@@ -181,3 +186,78 @@ metadata:
 
 -> to expost the pod by service
 kubectl expose pod nginx-pod --port=80 --target-port=80 --type=ClusterIP
+
+-> to create init coontainer 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp
+  labels: 
+    name: myapp-pod
+spec:
+  initContainers:
+    - name: init-myservice
+      image: busybox:1.28
+      command: ['sh', '-c', 'until nslookup myservice.default.svc.cluster.local; do echo waiting...; sleep 2; done']
+
+  containers:
+    - name: myapp-container
+      image: busybox:1.28
+      command: ['sh', '-c', 'echo the app is running && sleep 3600']
+      env:
+        - name: FIRSTNAME
+          value: "arul"
+
+-> to create deploy pod
+kubectl create deployment <deploye name> --image=<image name>
+
+-> to expost the pod as sevice 
+kubectl expose deployment nginx-deploy --name=myservice --port=80 --target-port=80
+<-- for creaet nodeport to bind port to local -->
+kubectl expose deployment my-app --type=NodePort --name=my-service
+
+
+--> to filter the pod by the lable 
+kubectl get pod --selector tire=<name>
+
+
+--> to taints a node
+kubectl taint node <node-name> <key=value>:effect(NoSchedules) 
+
+--> to specify the pod 
+add in yaml file 
+tolerations:
+    - key: "gpu"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+  the key value have to match to the value key value in the node
+
+--> to remove trains from a node
+kubectl taint nodes gpu-node <gpu=true>:NoSchedule-
+
+--> to add label to a node 
+kubectl label node <node name> <key=value>
+
+--> type of affinety
+  preferredDuringSchedulingIgnoredDuringExecution:
+  requiredDuringSchedulingIgnoredDuringExecution:
+   ->>requiredDuringSchedulingIgnoredDuringExecution:
+         nodeSelectorTerms:
+        - matchExpressions:
+          - key: topology.kubernetes.io/zone
+            operator: In
+            values:
+            - antarctica-east1
+            - antarctica-west1
+      this will check type the pod will look the lable key value if there is the key value found it will scheduled if the key value is not found means it will keed the pod pending
+    ->>preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+        preference:
+          matchExpressions:
+          - key: another-node-label-key
+            operator: In
+            values:
+            - another-node-label-value
+      this will check type the pod will look the lable key value if there is the key value found it will scheduled if the key value is not found means it will scheduled the avalible nodes
+    
