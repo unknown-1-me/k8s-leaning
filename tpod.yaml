@@ -1,0 +1,14 @@
+apiVersion : v1
+kind : Pod 
+metadata : 
+  name : nginx-pod4
+  labels : 
+    env : demo
+spec : 
+  containers:
+     - name : aimodel-container
+       image : nginx
+       ports : 
+        - containerPort : 80
+  nodeSelector :
+    size : "small"
