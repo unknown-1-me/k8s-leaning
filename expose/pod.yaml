@@ -1,0 +1,11 @@
+apiVersion : v1
+kind : Pod
+metadata : 
+  name : my-app
+  labels :
+    mypod : mcr
+spec : 
+  containers :
+    - name : my-pod
+      image : nginx
+      

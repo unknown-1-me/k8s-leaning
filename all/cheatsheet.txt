@@ -261,3 +261,26 @@ kubectl label node <node name> <key=value>
             - another-node-label-value
       this will check type the pod will look the lable key value if there is the key value found it will scheduled if the key value is not found means it will scheduled the avalible nodes
     
+
+-> to limte the request and cpu and menory usage
+
+add the folling in the yaml file  while creating the pod below thw containers part 
+
+
+resources:
+        requests:
+          memory: "128Mi"
+          cpu: "100m"
+        limits:
+          memory: "256Mi"
+          cpu: "200m"
+
+
+
+--> to create auto scalling
+
+to stress 
+-> kubectl run -i --tty load-generator --rm --image=busybox:1.28 --restart=Never -- /bin/sh -c "while sleep 0.01; do wget -q -O- http://php-apache; done"
+
+-> to check the autoscalling 
+kubectl get hpa <pod name> --watch

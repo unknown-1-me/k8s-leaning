@@ -1,0 +1,3 @@
+statup
+readiness
+liveness
